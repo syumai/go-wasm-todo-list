@@ -28,7 +28,6 @@ func toDoItem(props h.Object) h.VNode {
 	}
 
 	return h.H("li", nil,
-		h.Text(toDo.Title),
 		h.H("input", h.Object{
 			"type":    "checkbox",
 			"checked": toDo.Done,
@@ -43,6 +42,7 @@ func toDoItem(props h.Object) h.VNode {
 				updateToDo(id, checked)
 			}),
 		}),
+		h.Text(toDo.Title),
 	)
 }
 
