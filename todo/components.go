@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"syscall/js"
 
-	h "github.com/syumai/go-hyperscript"
+	h "github.com/syumai/go-hyperscript/hyperscript"
 	"github.com/syumai/go-wasm-todo-list/core"
 )
 

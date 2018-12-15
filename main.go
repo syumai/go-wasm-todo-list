@@ -1,7 +1,7 @@
 package main
 
 import (
-	h "github.com/syumai/go-hyperscript"
+	h "github.com/syumai/go-hyperscript/hyperscript"
 	"github.com/syumai/go-wasm-todo-list/core"
 	"github.com/syumai/go-wasm-todo-list/todo"
 )
