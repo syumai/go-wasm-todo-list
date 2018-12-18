@@ -3,14 +3,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:2eeb693cc7984d751a50fdd668936ca58646f954f1c4289ad40cf7a637f15c25"
+  digest = "1:9cc5c997b26981a65acaabef96031e84b87665589d71a0a67fdc91b8f85e2ec2"
   name = "github.com/syumai/go-hyperscript"
   packages = [
     "dom",
     "hyperscript",
   ]
   pruneopts = "UT"
-  revision = "f38abf541f9b7d54e67dddc9b3334d943accd4de"
+  revision = "1bcdc3d07a398d0e6e0651d19646ca5cba7b7b4d"
 
 [solve-meta]
   analyzer-name = "dep"

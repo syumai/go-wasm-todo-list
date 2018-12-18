@@ -42,14 +42,14 @@ func ToDo(props h.Object) h.VNode {
 		h.H("div", h.Object{"className": "input"},
 			h.H("form", h.Object{
 				"autocomplete": "off",
-				"onsubmit":     props.Get("appendToDo"),
+				"onsubmit":     props.EventCallback("appendToDo"),
 			},
 				h.H("input", h.Object{
 					"type":        "text",
 					"name":        "title",
 					"placeholder": "Input title",
 					"value":       props.String("title"),
-					"oninput":     props.Get("setTitle"),
+					"oninput":     props.EventCallback("setTitle"),
 				}),
 				h.H("button", nil, h.Text("Add")),
 			),
