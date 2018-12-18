@@ -1,28 +1,30 @@
-package todo
+package components
 
 import (
 	"strconv"
-	"syscall/js"
 
-	h "github.com/syumai/go-hyperscript"
-	"github.com/syumai/go-wasm-todo-list/core"
+	h "github.com/syumai/go-hyperscript/hyperscript"
+	"github.com/syumai/go-wasm-todo-list/store"
+	"github.com/syumai/go-wasm-todo-list/style"
 )
 
 var (
-	listContainerStyle = style{
-		"width":     "100%",
-		"display":   "flex",
-		"flex-wrap": "wrap",
-	}.String()
+	listContainerStyle = style.Style(
+		style.Prop{"width", "100%"},
+		style.Prop{"display", "flex"},
+		style.Prop{"flex-wrap", "wrap"},
+	)
 
-	listStyle = style{
-		"width":     "50%",
-		"max-width": "250px",
-	}.String()
+	listStyle = style.Style(
+		style.Prop{"width", "50%"},
+		style.Prop{"max-width", "250px"},
+	)
 )
 
 func toDoItem(props h.Object) h.VNode {
-	toDo, ok := props.Get("toDo").(*ToDoData)
+	updateToDo := props.Get("updateToDo").(func(int, bool))
+
+	toDo, ok := props.Get("toDo").(*store.ToDo)
 	if !ok {
 		return h.BlankElement
 	}
@@ -31,15 +33,8 @@ func toDoItem(props h.Object) h.VNode {
 		h.H("input", h.Object{
 			"type":    "checkbox",
 			"checked": toDo.Done,
-			"data-id": toDo.ID,
-			"onchange": core.EventAction(0, func(e js.Value) {
-				t := e.Get("target")
-				id, err := strconv.Atoi(t.Get("dataset").Get("id").String())
-				if err != nil {
-					return
-				}
-				checked := t.Get("checked").Bool()
-				updateToDo(id, checked)
+			"onchange": h.NewEventCallback(0, func(e h.Value) {
+				updateToDo(toDo.ID, !toDo.Done)
 			}),
 		}),
 		h.Text(toDo.Title),
@@ -48,37 +43,36 @@ func toDoItem(props h.Object) h.VNode {
 
 func toDoList(props h.Object) h.VNode {
 	v := props.Get("toDos")
-	toDos, ok := v.([]ToDoData)
+	toDos, ok := v.([]*store.ToDo)
 	if !ok {
 		return h.BlankElement
 	}
 
 	elements := make(h.VNodes, len(toDos))
 	for i, t := range toDos {
-		elements[i] = toDoItem(h.Object{"toDo": &t})
+		elements[i] = toDoItem(h.Object{
+			"toDo":       t,
+			"updateToDo": props.Get("updateToDo"),
+		})
 	}
 	return h.H("ul", nil, elements...)
 }
 
 func ToDo(props h.Object) h.VNode {
-	doingToDos, doneToDos := separateToDos(state.toDos)
+	toDos := props.Get("toDos").([]*store.ToDo)
+	doingToDos, doneToDos := store.SeparateToDos(toDos)
 	return h.H("div", nil,
 		h.H("div", h.Object{"className": "input"},
 			h.H("form", h.Object{
-				"action":       "#",
 				"autocomplete": "off",
-				"onsubmit": core.EventAction(js.PreventDefault, func(e js.Value) {
-					title := e.Get("target").Get("title").Get("value").String()
-					if len(title) == 0 {
-						return
-					}
-					appendToDo(title)
-				}),
+				"onsubmit":     props.Get("appendToDo"),
 			},
 				h.H("input", h.Object{
 					"type":        "text",
 					"name":        "title",
 					"placeholder": "Input title",
+					"value":       props.String("title"),
+					"oninput":     props.Get("setTitle"),
 				}),
 				h.H("button", nil, h.Text("Add")),
 			),
@@ -87,12 +81,18 @@ func ToDo(props h.Object) h.VNode {
 			h.H("div", h.Object{"style": listStyle},
 				h.H("h3", nil, h.Text("Doing")),
 				h.H("div", nil, h.Text("Count: "+strconv.Itoa(len(doingToDos)))),
-				h.H(toDoList, h.Object{"toDos": doingToDos}),
+				h.H(toDoList, h.Object{
+					"updateToDo": props.Get("updateToDo"),
+					"toDos":      doingToDos,
+				}),
 			),
 			h.H("div", h.Object{"style": listStyle},
 				h.H("h3", nil, h.Text("Done")),
 				h.H("div", nil, h.Text("Count: "+strconv.Itoa(len(doneToDos)))),
-				h.H(toDoList, h.Object{"toDos": doneToDos}),
+				h.H(toDoList, h.Object{
+					"updateToDo": props.Get("updateToDo"),
+					"toDos":      doneToDos,
+				}),
 			),
 		),
 	)

@@ -3,15 +3,21 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:2540e54bdc6658ba4f82d32f016fdc3f7ff663749dd890d5567f6f10febcfb82"
+  digest = "1:2eeb693cc7984d751a50fdd668936ca58646f954f1c4289ad40cf7a637f15c25"
   name = "github.com/syumai/go-hyperscript"
-  packages = ["."]
+  packages = [
+    "dom",
+    "hyperscript",
+  ]
   pruneopts = "UT"
-  revision = "b635cb4d23b8037900fbccdb93d5d13048746cb3"
+  revision = "f38abf541f9b7d54e67dddc9b3334d943accd4de"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  input-imports = ["github.com/syumai/go-hyperscript"]
+  input-imports = [
+    "github.com/syumai/go-hyperscript/dom",
+    "github.com/syumai/go-hyperscript/hyperscript",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1
