@@ -8,27 +8,9 @@ import (
 	"github.com/syumai/go-wasm-todo-list/style"
 )
 
-var (
-	listContainerStyle = style.Style(
-		style.Prop{"width", "100%"},
-		style.Prop{"display", "flex"},
-		style.Prop{"flex-wrap", "wrap"},
-	)
-
-	listStyle = style.Style(
-		style.Prop{"width", "50%"},
-		style.Prop{"max-width", "250px"},
-	)
-)
-
 func toDoItem(props h.Object) h.VNode {
 	updateToDo := props.Get("updateToDo").(func(int, bool))
-
-	toDo, ok := props.Get("toDo").(*store.ToDo)
-	if !ok {
-		return h.BlankElement
-	}
-
+	toDo := props.Get("toDo").(*store.ToDo)
 	return h.H("li", nil,
 		h.H("input", h.Object{
 			"type":    "checkbox",
@@ -42,16 +24,11 @@ func toDoItem(props h.Object) h.VNode {
 }
 
 func toDoList(props h.Object) h.VNode {
-	v := props.Get("toDos")
-	toDos, ok := v.([]*store.ToDo)
-	if !ok {
-		return h.BlankElement
-	}
-
+	toDos := props.Get("toDos").([]*store.ToDo)
 	elements := make(h.VNodes, len(toDos))
-	for i, t := range toDos {
+	for i, toDo := range toDos {
 		elements[i] = toDoItem(h.Object{
-			"toDo":       t,
+			"toDo":       toDo,
 			"updateToDo": props.Get("updateToDo"),
 		})
 	}
@@ -77,8 +54,8 @@ func ToDo(props h.Object) h.VNode {
 				h.H("button", nil, h.Text("Add")),
 			),
 		),
-		h.H("div", h.Object{"style": listContainerStyle},
-			h.H("div", h.Object{"style": listStyle},
+		h.H("div", h.Object{"style": style.ListContainerStyle},
+			h.H("div", h.Object{"style": style.ListStyle},
 				h.H("h3", nil, h.Text("Doing")),
 				h.H("div", nil, h.Text("Count: "+strconv.Itoa(len(doingToDos)))),
 				h.H(toDoList, h.Object{
@@ -86,7 +63,7 @@ func ToDo(props h.Object) h.VNode {
 					"toDos":      doingToDos,
 				}),
 			),
-			h.H("div", h.Object{"style": listStyle},
+			h.H("div", h.Object{"style": style.ListStyle},
 				h.H("h3", nil, h.Text("Done")),
 				h.H("div", nil, h.Text("Count: "+strconv.Itoa(len(doneToDos)))),
 				h.H(toDoList, h.Object{
