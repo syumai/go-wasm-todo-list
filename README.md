@@ -9,7 +9,7 @@
 
 ## Environment
 
-* Go 1.11
+* Go 1.12
 
 ## Development
 
