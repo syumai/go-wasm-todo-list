@@ -15,8 +15,9 @@ func toDoItem(props h.Object) h.VNode {
 		h.H("input", h.Object{
 			"type":    "checkbox",
 			"checked": toDo.Done,
-			"onchange": h.NewEventCallback(0, func(e h.Value) {
+			"onchange": h.FuncOf(func(this h.Value, args []h.Value) interface{} {
 				updateToDo(toDo.ID, !toDo.Done)
+				return nil
 			}),
 		}),
 		h.Text(toDo.Title),
@@ -42,14 +43,14 @@ func ToDo(props h.Object) h.VNode {
 		h.H("div", h.Object{"className": "input"},
 			h.H("form", h.Object{
 				"autocomplete": "off",
-				"onsubmit":     props.EventCallback("appendToDo"),
+				"onsubmit":     props.Func("appendToDo"),
 			},
 				h.H("input", h.Object{
 					"type":        "text",
 					"name":        "title",
 					"placeholder": "Input title",
 					"value":       props.String("title"),
-					"oninput":     props.EventCallback("setTitle"),
+					"oninput":     props.Func("setTitle"),
 				}),
 				h.H("button", nil, h.Text("Add")),
 			),
